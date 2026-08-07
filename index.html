@@ -79,6 +79,15 @@
         .input-nome:focus {
             border-color: #89CFF0;
         }
+        .msg-agradecimento {
+            background-color: rgba(212, 237, 218, 0.9);
+            color: #155724;
+            padding: 15px;
+            border-radius: 15px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: none; /* Começa escondido */
+        }
 
         .btn { 
             padding: 15px 30px; 
@@ -99,7 +108,6 @@
             box-shadow: none;
         }
         
-        /* Botão da página inicial */
         .btn-entrar {
             background: linear-gradient(135deg, #89CFF0 0%, #FFB6C1 100%);
             color: #333;
@@ -203,9 +211,6 @@
 </head>
 <body>
 
-<!-- ========================================== -->
-<!-- TELA 1: PÁGINA INICIAL COM A FOTO E TÍTULO -->
-<!-- ========================================== -->
 <div class="container" id="tela-inicial">
     <h2>Chá Revelação</h2>
     <h1>Priscila & Diego</h1>
@@ -215,9 +220,6 @@
     <button class="btn btn-entrar" id="btn-entrar">Votar</button>
 </div>
 
-<!-- ========================================== -->
-<!-- TELA 2: DASHBOARD DE VOTAÇÃO (COMEÇA INVISÍVEL) -->
-<!-- ========================================== -->
 <div class="container" id="tela-votacao" style="display: none;">
     <h2>Quem será o novo integrante do grupo de louvor?</h2>
     <br>
@@ -227,6 +229,11 @@
         <br>
         <button class="btn btn-boy" id="btn-boy">É Menino! 🥁💙</button>
         <button class="btn btn-girl" id="btn-girl">É Menina! 🎻💖</button>
+    </div>
+
+    <!-- Mensagem que aparece depois de votar -->
+    <div id="msg-agradecimento" class="msg-agradecimento">
+        🎉 Seu palpite foi registrado com sucesso! Obrigado!
     </div>
 
     <div class="results">
@@ -273,6 +280,14 @@
     }
     inicializarBanco();
 
+    // TRAVA DE SEGURANÇA NA INICIALIZAÇÃO
+    // Se o aparelho já tiver votado antes, ajusta as telas assim que a página carrega
+    if (localStorage.getItem('ja_votou_cha_revelacao')) {
+        document.getElementById('area-votacao').style.display = 'none';
+        document.getElementById('msg-agradecimento').style.display = 'block';
+        document.getElementById('btn-entrar').innerText = "Ver Placar";
+    }
+
     // LÓGICA DE NAVEGAÇÃO ENTRE AS TELAS
     document.getElementById('btn-entrar').addEventListener('click', () => {
         document.getElementById('tela-inicial').style.display = 'none';
@@ -295,7 +310,6 @@
             return;
         }
 
-        // Desabilita os botões rapidinho enquanto envia o voto para não clicarem 2x sem querer
         document.getElementById('btn-boy').disabled = true;
         document.getElementById('btn-girl').disabled = true;
 
@@ -310,12 +324,11 @@
             historico: arrayUnion({ nome: nomeInput, voto: genero })
         });
 
-        // Limpa o campo de nome para o próximo voto
-        document.getElementById('nome-votante').value = '';
-        
-        // Habilita os botões de novo
-        document.getElementById('btn-boy').disabled = false;
-        document.getElementById('btn-girl').disabled = false;
+        // TRAVA DE SEGURANÇA AO VOTAR
+        // Salva que o aparelho votou e esconde os botões imediatamente
+        localStorage.setItem('ja_votou_cha_revelacao', 'sim');
+        document.getElementById('area-votacao').style.display = 'none';
+        document.getElementById('msg-agradecimento').style.display = 'block';
     }
 
     document.getElementById('btn-boy').addEventListener('click', () => votar('meninos'));
