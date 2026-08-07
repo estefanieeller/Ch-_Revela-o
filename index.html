@@ -120,12 +120,12 @@
 
 <div class="container">
     <h1>Priscila & Diego</h1>
-    <h2>Quem será o novo integrante da banda?</h2>
-    <div class="music-icons">🎸 🎹 🎤 🥁</div>
-    <p class="subtitle">Faça sua aposta musical para o nosso bebê!</p>
+    <h2>Quem será o novo integrante do grupo de louvor?</h2>
+    <div class="music-icons">🎸 🎹 🎻​ 🎤 🥁</div>
+    <p class="subtitle"></p>
 
-    <button class="btn btn-boy" id="btn-boy">É Menino! 🎸💙</button>
-    <button class="btn btn-girl" id="btn-girl">É Menina! 🎤💖</button>
+    <button class="btn btn-boy" id="btn-boy">É Menino! 🥁💙</button>
+    <button class="btn btn-girl" id="btn-girl">É Menina! 🎻​💖</button>
 
     <div class="results">
         <div class="placar-title">Placar Atual</div>
@@ -155,7 +155,7 @@
     const db = getFirestore(app);
     
     // Zerei o placar trocando o nome do documento de "placar" para "placar_oficial"
-    const docRef = doc(db, "votacao", "placar_oficial");
+    const docRef = doc(db, "votacao", "placar__oficial");
 
     async function inicializarBanco() {
         const snap = await getDoc(docRef);
