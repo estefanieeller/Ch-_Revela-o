@@ -76,14 +76,16 @@
             transform: scale(1.05);
             box-shadow: 0 6px 20px rgba(74, 144, 226, 0.6);
         }
+        /* Mudei as cores da menina para um rosa mais claro */
         .btn-girl { 
-            background-color: #E91E63; 
-            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
+            background-color: #FFB6C1; /* Rosa claro */
+            color: #d81b60; /* Texto mais escuro para contraste */
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.5);
         }
         .btn-girl:hover:not(:disabled) { 
-            background-color: #C2185B; 
+            background-color: #FF9EAE; /* Rosa um pouco mais forte no hover */
             transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.6);
+            box-shadow: 0 6px 20px rgba(255, 182, 193, 0.7);
         }
         .results { 
             margin-top: 40px; 
@@ -109,8 +111,9 @@
             width: 50%; 
             transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
         }
+        /* Mudei a cor da barra da menina para combinar */
         .bar-girl { 
-            background-color: #E91E63; 
+            background-color: #FFB6C1; 
             width: 50%; 
             transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
         }
@@ -121,11 +124,11 @@
 <div class="container">
     <h1>Priscila & Diego</h1>
     <h2>Quem será o novo integrante do grupo de louvor?</h2>
-    <div class="music-icons">🎸 🎹 🎻​ 🎤 🥁</div>
+    <div class="music-icons">🎸 🎹 🎻 🎤 🥁</div>
     <p class="subtitle"></p>
 
     <button class="btn btn-boy" id="btn-boy">É Menino! 🥁💙</button>
-    <button class="btn btn-girl" id="btn-girl">É Menina! 🎻​💖</button>
+    <button class="btn btn-girl" id="btn-girl">É Menina! 🎻💖</button>
 
     <div class="results">
         <div class="placar-title">Placar Atual</div>
@@ -154,8 +157,8 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     
-    // Zerei o placar trocando o nome do documento de "placar" para "placar_oficial"
-    const docRef = doc(db, "votacao", "placar__oficial");
+    // Zerei o placar trocando o nome do documento de "placar" para "placar__oficial"
+    const docRef = doc(db, "votacao", "placar__oficial_v2");
 
     async function inicializarBanco() {
         const snap = await getDoc(docRef);
@@ -180,7 +183,8 @@
         if (genero === 'meninos') {
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#4A90E2', '#89CFF0', '#ffffff'] });
         } else {
-            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#E91E63', '#F4C2C2', '#ffffff'] });
+            /* Mudei as cores dos confetes da menina para tons mais claros também */
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#FFB6C1', '#FFC0CB', '#ffffff'] });
         }
 
         await updateDoc(docRef, {
