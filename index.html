@@ -28,10 +28,7 @@
             max-width: 550px; 
             margin: auto; 
             
-            /* --- AJUSTE AQUI: CAIXA MAIS TRANSPARENTE --- */
-            /* Antes era rgba(255, 255, 255, 0.85) */
             background: rgba(255, 255, 255, 0.45); 
-            /* Reduzi um pouco o embaçado para ver melhor a foto */
             backdrop-filter: blur(4px); 
             
             padding: 40px 30px; 
@@ -44,12 +41,11 @@
             color: #333; 
             font-size: 2.5em;
             margin-bottom: 5px;
-            /* Sombra no texto para ajudar a leitura com o fundo transparente */
             text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.8);
         }
         h2 {
             font-family: 'Fredoka', sans-serif;
-            color: #444; /* Escureci um pouco para destacar mais */
+            color: #444; 
             font-size: 1.4em;
             margin-top: 0;
             text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
@@ -61,7 +57,7 @@
         }
         p.subtitle {
             font-size: 1.1em;
-            color: #222; /* Texto mais escuro */
+            color: #222; 
             font-weight: 600;
             margin-bottom: 30px;
             text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
@@ -82,15 +78,6 @@
         }
         .input-nome:focus {
             border-color: #89CFF0;
-        }
-        .msg-agradecimento {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 15px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            display: none; 
         }
 
         .btn { 
@@ -166,7 +153,7 @@
             border-radius: 20px; 
             overflow: hidden; 
             margin-top: 20px; 
-            background: rgba(255, 255, 255, 0.7); /* Deixei o fundo da barra um pouco transparente tb */
+            background: rgba(255, 255, 255, 0.7); 
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
         }
         .bar-boy { 
@@ -182,7 +169,7 @@
 
         .historico-votos {
             margin-top: 40px;
-            background: rgba(255, 255, 255, 0.65); /* Mais transparente */
+            background: rgba(255, 255, 255, 0.65); 
             padding: 20px;
             border-radius: 15px;
             text-align: left;
@@ -222,6 +209,7 @@
 <div class="container" id="tela-inicial">
     <h2>Chá Revelação</h2>
     <h1>Priscila & Diego</h1>
+    <div class="music-icons"> 🎹 🎻 🎤 🥁</div>
     <p class="subtitle">Participe da nossa revelação!</p>
     
     <button class="btn btn-entrar" id="btn-entrar">Votar</button>
@@ -232,7 +220,6 @@
 <!-- ========================================== -->
 <div class="container" id="tela-votacao" style="display: none;">
     <h2>Quem será o novo integrante do grupo de louvor?</h2>
-    <div class="music-icons"> 🎹 🎻 🎤 🥁</div>
     <br>
 
     <div id="area-votacao">
@@ -240,10 +227,6 @@
         <br>
         <button class="btn btn-boy" id="btn-boy">É Menino! 🥁💙</button>
         <button class="btn btn-girl" id="btn-girl">É Menina! 🎻💖</button>
-    </div>
-
-    <div id="msg-agradecimento" class="msg-agradecimento">
-        🎉 Seu voto foi registrado com sucesso! Obrigado!
     </div>
 
     <div class="results">
@@ -296,15 +279,6 @@
         document.getElementById('tela-votacao').style.display = 'block';
     });
 
-    // Se a pessoa já votou, muda a interface
-    if (localStorage.getItem('ja_votou_cha_revelacao')) {
-        document.getElementById('area-votacao').style.display = 'none';
-        document.getElementById('msg-agradecimento').style.display = 'block';
-        
-        // Altera o botão da primeira tela para ficar mais intuitivo
-        document.getElementById('btn-entrar').innerText = "Ver Placar";
-    }
-
     onSnapshot(docRef, (docSnap) => {
         if (docSnap.exists()) {
             const dados = docSnap.data();
@@ -321,6 +295,7 @@
             return;
         }
 
+        // Desabilita os botões rapidinho enquanto envia o voto para não clicarem 2x sem querer
         document.getElementById('btn-boy').disabled = true;
         document.getElementById('btn-girl').disabled = true;
 
@@ -335,9 +310,12 @@
             historico: arrayUnion({ nome: nomeInput, voto: genero })
         });
 
-        localStorage.setItem('ja_votou_cha_revelacao', 'sim');
-        document.getElementById('area-votacao').style.display = 'none';
-        document.getElementById('msg-agradecimento').style.display = 'block';
+        // Limpa o campo de nome para o próximo voto
+        document.getElementById('nome-votante').value = '';
+        
+        // Habilita os botões de novo
+        document.getElementById('btn-boy').disabled = false;
+        document.getElementById('btn-girl').disabled = false;
     }
 
     document.getElementById('btn-boy').addEventListener('click', () => votar('meninos'));
