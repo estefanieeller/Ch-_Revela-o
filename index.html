@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chá Revelação - Votação</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #f9f9f9; padding: 50px; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0px 4px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        .btn { padding: 15px 30px; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; margin: 10px; color: white; transition: 0.3s; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-boy { background-color: #4A90E2; }
+        .btn-boy:hover { background-color: #357ABD; }
+        .btn-girl { background-color: #E91E63; }
+        .btn-girl:hover { background-color: #C2185B; }
+        .results { margin-top: 30px; font-size: 20px; font-weight: bold; }
+        .bar-container { display: flex; height: 30px; border-radius: 15px; overflow: hidden; margin-top: 15px; background: #ddd; }
+        .bar-boy { background-color: #4A90E2; width: 50%; transition: width 0.5s; }
+        .bar-girl { background-color: #E91E63; width: 50%; transition: width 0.5s; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Menino ou Menina? 👶</h1>
+    <p>Faça sua aposta para o bebê!</p>
+
+    <button class="btn btn-boy" id="btn-boy">É Menino! 💙</button>
+    <button class="btn btn-girl" id="btn-girl">É Menina! 💖</button>
+
+    <div class="results">
+        <p>Placar Atual:</p>
+        <p>Meninos: <span id="count-boy">0</span> | Meninas: <span id="count-girl">0</span></p>
+        
+        <div class="bar-container">
+            <div class="bar-boy" id="bar-boy"></div>
+            <div class="bar-girl" id="bar-girl"></div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    // Importando o Firebase pelos links diretos (compatível com GitHub Pages)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, setDoc, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // As configurações do seu banco de dados
+    const firebaseConfig = {
+        apiKey: "AIzaSyBRhIu1b6ltYiJD1EhWTS3F80g8E3Zchzc",
+        authDomain: "cha-revelacao-2512c.firebaseapp.com",
+        projectId: "cha-revelacao-2512c",
+        storageBucket: "cha-revelacao-2512c.firebasestorage.app",
+        messagingSenderId: "150965177259",
+        appId: "1:150965177259:web:18c20e58586d4b2c0c60ee"
+    };
+
+    // Inicializa o app e o banco de dados
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const docRef = doc(db, "votacao", "placar");
+
+    // Garante que o documento existe no banco quando a página carregar
+    async function inicializarBanco() {
+        const snap = await getDoc(docRef);
+        if (!snap.exists()) {
+            await setDoc(docRef, { meninos: 0, meninas: 0 });
+        }
+    }
+    inicializarBanco();
+
+    // Escuta as mudanças em TEMPO REAL
+    onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+            const dados = docSnap.data();
+            atualizarDashboard(dados.meninos, dados.meninas);
+        }
+    });
+
+    // Função que envia o voto para a nuvem
+    async function votar(genero) {
+        document.getElementById('btn-boy').disabled = true;
+        document.getElementById('btn-girl').disabled = true;
+
+        await updateDoc(docRef, {
+            [genero]: increment(1)
+        });
+
+        document.getElementById('btn-boy').disabled = false;
+        document.getElementById('btn-girl').disabled = false;
+    }
+
+    // Conecta os botões
+    document.getElementById('btn-boy').addEventListener('click', () => votar('meninos'));
+    document.getElementById('btn-girl').addEventListener('click', () => votar('meninas'));
+
+    // Atualiza as barras
+    function atualizarDashboard(votosBoy, votosGirl) {
+        document.getElementById('count-boy').innerText = votosBoy;
+        document.getElementById('count-girl').innerText = votosGirl;
+
+        let total = votosBoy + votosGirl;
+        let pctBoy = total === 0 ? 50 : (votosBoy / total) * 100;
+        let pctGirl = total === 0 ? 50 : (votosGirl / total) * 100;
+
+        document.getElementById('bar-boy').style.width = pctBoy + '%';
+        document.getElementById('bar-girl').style.width = pctGirl + '%';
+    }
+</script>
+
+</body>
+</html>
