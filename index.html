@@ -4,29 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chá Revelação - Priscila & Diego</title>
-    <!-- Fontes mais bonitas e divertidas -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <!-- Biblioteca de confetes -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
         body { 
             font-family: 'Poppins', sans-serif; 
             text-align: center; 
-            /* Fundo em degradê suave azul e rosa */
-            background: linear-gradient(135deg, #e3f2fd 0%, #fce4ec 100%); 
             padding: 40px 20px;
             min-height: 100vh;
             margin: 0;
+            
+            /* Necessário para a foto de fundo funcionar direito */
+            position: relative;
+            z-index: 1;
+            
+            /* Cor de fundo caso a foto não carregue */
+            background-color: #fce4ec; 
         }
+
+        /* --- MÁGICA DA FOTO DE FUNDO CLEAN --- */
+        body::before {
+            content: "";
+            position: fixed; /* Fixa a imagem para não rolar com a tela */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            
+            /* 1️⃣ COLOQUE O NOME DA SUA FOTO AQUI (ex: foto.jpg ou foto.png) */
+            background-image: url('foto.jpg'); 
+            
+            background-size: cover; /* Faz a foto cobrir a tela toda */
+            background-position: center; /* Centraliza a foto */
+            background-repeat: no-repeat;
+            
+            /* 2️⃣ AQUI CONTROLA A TRANSPARÊNCIA (0.15 = 15% visível. Pode aumentar se quiser mais forte) */
+            opacity: 0.15; 
+            
+            z-index: -1; /* Joga a foto para trás de tudo */
+        }
+
         .container { 
             max-width: 550px; 
             margin: auto; 
-            background: white; 
+            
+            /* Efeito "vidro" clean: fundo branco levemente transparente */
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(8px); /* Deixa o que passa por trás um pouco embaçado */
+            
             padding: 40px 30px; 
             border-radius: 20px; 
-            box-shadow: 0px 10px 30px rgba(0,0,0,0.1); 
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.15); 
         }
+
         h1 { 
             font-family: 'Fredoka', sans-serif;
             color: #333; 
@@ -50,7 +81,6 @@
             margin-bottom: 30px;
         }
         
-        /* --- ESTILOS DO NOVO CAMPO DE NOME --- */
         .input-nome {
             padding: 12px 20px;
             font-size: 16px;
@@ -62,6 +92,7 @@
             margin-bottom: 15px;
             outline: none;
             transition: border-color 0.3s;
+            background: rgba(255, 255, 255, 0.9);
         }
         .input-nome:focus {
             border-color: #89CFF0;
@@ -73,7 +104,7 @@
             border-radius: 15px;
             font-weight: 600;
             margin-bottom: 20px;
-            display: none; /* Fica escondido até a pessoa votar */
+            display: none; 
         }
 
         .btn { 
@@ -133,7 +164,7 @@
             border-radius: 20px; 
             overflow: hidden; 
             margin-top: 20px; 
-            background: #eee; 
+            background: #e0e0e0; 
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
         }
         .bar-boy { 
@@ -147,10 +178,9 @@
             transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
         }
 
-        /* --- ESTILOS DA LISTA DE VOTOS --- */
         .historico-votos {
             margin-top: 40px;
-            background: #f9f9f9;
+            background: rgba(249, 249, 249, 0.8);
             padding: 20px;
             border-radius: 15px;
             text-align: left;
@@ -171,7 +201,7 @@
         }
         .historico-votos li {
             padding: 8px 10px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #ddd;
             font-size: 15px;
             color: #333;
         }
@@ -190,7 +220,6 @@
     <div class="music-icons">🎸 🎹 🎻 🎤 🥁</div>
     <p class="subtitle"></p>
 
-    <!-- Área de votação que some após votar -->
     <div id="area-votacao">
         <input type="text" id="nome-votante" class="input-nome" placeholder="Digite seu nome para votar" required>
         <br>
@@ -198,7 +227,6 @@
         <button class="btn btn-girl" id="btn-girl">É Menina! 🎻💖</button>
     </div>
 
-    <!-- Mensagem que aparece após votar -->
     <div id="msg-agradecimento" class="msg-agradecimento">
         🎉 Seu voto foi registrado com sucesso! Obrigado!
     </div>
@@ -213,9 +241,8 @@
         </div>
     </div>
 
-    <!-- Lista de quem votou -->
     <div class="historico-votos">
-        <h3>Lista de Palpites 📜</h3>
+        <h3>Lista de Apostas 📜</h3>
         <ul id="lista-nomes">
             <!-- Os nomes vão aparecer aqui -->
         </ul>
@@ -224,7 +251,6 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    // Adicionei o arrayUnion aqui na importação
     import { getFirestore, doc, onSnapshot, setDoc, updateDoc, increment, getDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -239,19 +265,18 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     
-    // Novo documento para receber a estrutura de histórico
+    // Mantive a versão v4 para você não perder os testes, 
+    // mas pode mudar para v5 se quiser zerar tudo de novo.
     const docRef = doc(db, "votacao", "placar__oficial_v4");
 
     async function inicializarBanco() {
         const snap = await getDoc(docRef);
         if (!snap.exists()) {
-            // Agora o banco nasce com um array vazio chamado 'historico'
             await setDoc(docRef, { meninos: 0, meninas: 0, historico: [] });
         }
     }
     inicializarBanco();
 
-    // Verifica se o aparelho já votou
     if (localStorage.getItem('ja_votou_cha_revelacao')) {
         document.getElementById('area-votacao').style.display = 'none';
         document.getElementById('msg-agradecimento').style.display = 'block';
@@ -260,7 +285,6 @@
     onSnapshot(docRef, (docSnap) => {
         if (docSnap.exists()) {
             const dados = docSnap.data();
-            // Passamos o histórico para a função que atualiza a tela
             atualizarDashboard(dados.meninos, dados.meninas, dados.historico || []);
         }
     });
@@ -268,7 +292,6 @@
     async function votar(genero) {
         const nomeInput = document.getElementById('nome-votante').value.trim();
         
-        // Bloqueia se a pessoa tentar votar sem nome
         if (nomeInput === "") {
             alert("Por favor, digite seu nome antes de votar!");
             document.getElementById('nome-votante').focus();
@@ -284,16 +307,12 @@
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#FFB6C1', '#FFC0CB', '#ffffff'] });
         }
 
-        // Salva o voto E o nome no banco de dados
         await updateDoc(docRef, {
             [genero]: increment(1),
             historico: arrayUnion({ nome: nomeInput, voto: genero })
         });
 
-        // Salva no navegador que essa pessoa já votou
         localStorage.setItem('ja_votou_cha_revelacao', 'sim');
-
-        // Esconde os botões e mostra a mensagem de sucesso
         document.getElementById('area-votacao').style.display = 'none';
         document.getElementById('msg-agradecimento').style.display = 'block';
     }
@@ -312,9 +331,8 @@
         document.getElementById('bar-boy').style.width = pctBoy + '%';
         document.getElementById('bar-girl').style.width = pctGirl + '%';
 
-        // Atualiza a lista de nomes na tela
         const listaUl = document.getElementById('lista-nomes');
-        listaUl.innerHTML = ''; // Limpa a lista antes de reescrever
+        listaUl.innerHTML = ''; 
         
         historico.forEach(item => {
             const li = document.createElement('li');
