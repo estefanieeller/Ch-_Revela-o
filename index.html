@@ -3,35 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chá Revelação - Votação</title>
+    <title>Chá Revelação - Priscila & Diego</title>
+    <!-- Fontes mais bonitas e divertidas -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Biblioteca de confetes -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #f9f9f9; padding: 50px; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0px 4px 10px rgba(0,0,0,0.1); }
-        h1 { color: #333; }
-        .btn { padding: 15px 30px; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; margin: 10px; color: white; transition: 0.3s; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-boy { background-color: #4A90E2; }
-        .btn-boy:hover { background-color: #357ABD; }
-        .btn-girl { background-color: #E91E63; }
-        .btn-girl:hover { background-color: #C2185B; }
-        .results { margin-top: 30px; font-size: 20px; font-weight: bold; }
-        .bar-container { display: flex; height: 30px; border-radius: 15px; overflow: hidden; margin-top: 15px; background: #ddd; }
-        .bar-boy { background-color: #4A90E2; width: 50%; transition: width 0.5s; }
-        .bar-girl { background-color: #E91E63; width: 50%; transition: width 0.5s; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            text-align: center; 
+            /* Fundo em degradê suave azul e rosa */
+            background: linear-gradient(135deg, #e3f2fd 0%, #fce4ec 100%); 
+            padding: 40px 20px;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container { 
+            max-width: 550px; 
+            margin: auto; 
+            background: white; 
+            padding: 40px 30px; 
+            border-radius: 20px; 
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.1); 
+        }
+        h1 { 
+            font-family: 'Fredoka', sans-serif;
+            color: #333; 
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+        h2 {
+            font-family: 'Fredoka', sans-serif;
+            color: #555;
+            font-size: 1.4em;
+            margin-top: 0;
+        }
+        .music-icons {
+            font-size: 2em;
+            margin: 15px 0;
+            letter-spacing: 15px;
+        }
+        p.subtitle {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .btn { 
+            padding: 15px 30px; 
+            font-size: 18px; 
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            border: none; 
+            border-radius: 30px; 
+            cursor: pointer; 
+            margin: 10px; 
+            color: white; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease; 
+        }
+        .btn:disabled { 
+            opacity: 0.5; 
+            cursor: not-allowed; 
+            transform: none;
+            box-shadow: none;
+        }
+        .btn-boy { 
+            background-color: #4A90E2; 
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+        }
+        .btn-boy:hover:not(:disabled) { 
+            background-color: #357ABD; 
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.6);
+        }
+        .btn-girl { 
+            background-color: #E91E63; 
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
+        }
+        .btn-girl:hover:not(:disabled) { 
+            background-color: #C2185B; 
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.6);
+        }
+        .results { 
+            margin-top: 40px; 
+            font-size: 18px; 
+            color: #444;
+        }
+        .placar-title {
+            font-weight: 600;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        .bar-container { 
+            display: flex; 
+            height: 35px; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            margin-top: 20px; 
+            background: #eee; 
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .bar-boy { 
+            background-color: #4A90E2; 
+            width: 50%; 
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .bar-girl { 
+            background-color: #E91E63; 
+            width: 50%; 
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Menino ou Menina? 👶</h1>
-    <p>Faça sua aposta para o bebê!</p>
+    <h1>Priscila & Diego</h1>
+    <h2>Quem será o novo integrante da banda?</h2>
+    <div class="music-icons">🎸 🎹 🎤 🥁</div>
+    <p class="subtitle">Faça sua aposta musical para o nosso bebê!</p>
 
-    <button class="btn btn-boy" id="btn-boy">É Menino! 💙</button>
-    <button class="btn btn-girl" id="btn-girl">É Menina! 💖</button>
+    <button class="btn btn-boy" id="btn-boy">É Menino! 🎸💙</button>
+    <button class="btn btn-girl" id="btn-girl">É Menina! 🎤💖</button>
 
     <div class="results">
-        <p>Placar Atual:</p>
-        <p>Meninos: <span id="count-boy">0</span> | Meninas: <span id="count-girl">0</span></p>
+        <div class="placar-title">Placar Atual</div>
+        <p>Meninos: <strong id="count-boy">0</strong> | Meninas: <strong id="count-girl">0</strong></p>
         
         <div class="bar-container">
             <div class="bar-boy" id="bar-boy"></div>
@@ -41,11 +139,9 @@
 </div>
 
 <script type="module">
-    // Importando o Firebase pelos links diretos (compatível com GitHub Pages)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, onSnapshot, setDoc, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // As configurações do seu banco de dados
     const firebaseConfig = {
         apiKey: "AIzaSyBRhIu1b6ltYiJD1EhWTS3F80g8E3Zchzc",
         authDomain: "cha-revelacao-2512c.firebaseapp.com",
@@ -55,12 +151,12 @@
         appId: "1:150965177259:web:18c20e58586d4b2c0c60ee"
     };
 
-    // Inicializa o app e o banco de dados
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const docRef = doc(db, "votacao", "placar");
+    
+    // Zerei o placar trocando o nome do documento de "placar" para "placar_oficial"
+    const docRef = doc(db, "votacao", "placar_oficial");
 
-    // Garante que o documento existe no banco quando a página carregar
     async function inicializarBanco() {
         const snap = await getDoc(docRef);
         if (!snap.exists()) {
@@ -69,7 +165,6 @@
     }
     inicializarBanco();
 
-    // Escuta as mudanças em TEMPO REAL
     onSnapshot(docRef, (docSnap) => {
         if (docSnap.exists()) {
             const dados = docSnap.data();
@@ -77,10 +172,16 @@
         }
     });
 
-    // Função que envia o voto para a nuvem
     async function votar(genero) {
         document.getElementById('btn-boy').disabled = true;
         document.getElementById('btn-girl').disabled = true;
+
+        // Dispara os confetes com as cores certas
+        if (genero === 'meninos') {
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#4A90E2', '#89CFF0', '#ffffff'] });
+        } else {
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#E91E63', '#F4C2C2', '#ffffff'] });
+        }
 
         await updateDoc(docRef, {
             [genero]: increment(1)
@@ -90,11 +191,9 @@
         document.getElementById('btn-girl').disabled = false;
     }
 
-    // Conecta os botões
     document.getElementById('btn-boy').addEventListener('click', () => votar('meninos'));
     document.getElementById('btn-girl').addEventListener('click', () => votar('meninas'));
 
-    // Atualiza as barras
     function atualizarDashboard(votosBoy, votosGirl) {
         document.getElementById('count-boy').innerText = votosBoy;
         document.getElementById('count-girl').innerText = votosGirl;
