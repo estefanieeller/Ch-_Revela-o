@@ -67,26 +67,31 @@
             transform: none;
             box-shadow: none;
         }
+        
+        /* --- NOVO AZUL CLARINHO --- */
         .btn-boy { 
-            background-color: #4A90E2; 
-            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+            background-color: #89CFF0; /* Azul bebê */
+            color: #0a4b78; /* Texto mais escuro para contraste */
+            box-shadow: 0 4px 15px rgba(137, 207, 240, 0.4);
         }
         .btn-boy:hover:not(:disabled) { 
-            background-color: #357ABD; 
+            background-color: #6CB4EE; /* Azul levemente mais forte no hover */
             transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.6);
+            box-shadow: 0 6px 20px rgba(137, 207, 240, 0.6);
         }
-        /* Mudei as cores da menina para um rosa mais claro */
+        
+        /* --- NOVO ROSA CLARINHO --- */
         .btn-girl { 
             background-color: #FFB6C1; /* Rosa claro */
             color: #d81b60; /* Texto mais escuro para contraste */
             box-shadow: 0 4px 15px rgba(255, 182, 193, 0.5);
         }
         .btn-girl:hover:not(:disabled) { 
-            background-color: #FF9EAE; /* Rosa um pouco mais forte no hover */
+            background-color: #FF9EAE; /* Rosa levemente mais forte no hover */
             transform: scale(1.05);
             box-shadow: 0 6px 20px rgba(255, 182, 193, 0.7);
         }
+
         .results { 
             margin-top: 40px; 
             font-size: 18px; 
@@ -106,12 +111,13 @@
             background: #eee; 
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
         }
+        
+        /* Barras com as novas cores claras */
         .bar-boy { 
-            background-color: #4A90E2; 
+            background-color: #89CFF0; 
             width: 50%; 
             transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
         }
-        /* Mudei a cor da barra da menina para combinar */
         .bar-girl { 
             background-color: #FFB6C1; 
             width: 50%; 
@@ -157,8 +163,8 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     
-    // Zerei o placar trocando o nome do documento de "placar" para "placar__oficial"
-    const docRef = doc(db, "votacao", "placar__oficial_v2");
+    // Novo documento no banco para zerar novamente os testes do azul escuro
+    const docRef = doc(db, "votacao", "placar__oficial_v3");
 
     async function inicializarBanco() {
         const snap = await getDoc(docRef);
@@ -179,11 +185,10 @@
         document.getElementById('btn-boy').disabled = true;
         document.getElementById('btn-girl').disabled = true;
 
-        // Dispara os confetes com as cores certas
+        // Confetes também ajustados para os tons mais claros
         if (genero === 'meninos') {
-            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#4A90E2', '#89CFF0', '#ffffff'] });
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#89CFF0', '#ADD8E6', '#ffffff'] });
         } else {
-            /* Mudei as cores dos confetes da menina para tons mais claros também */
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#FFB6C1', '#FFC0CB', '#ffffff'] });
         }
 
