@@ -267,7 +267,7 @@
     
     // Mantive a versão v4 para você não perder os testes, 
     // mas pode mudar para v5 se quiser zerar tudo de novo.
-    const docRef = doc(db, "votacao", "placar__oficial_v4");
+    const docRef = doc(db, "votacao", "placar_v1");
 
     async function inicializarBanco() {
         const snap = await getDoc(docRef);
