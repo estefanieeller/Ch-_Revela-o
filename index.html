@@ -49,6 +49,33 @@
             color: #666;
             margin-bottom: 30px;
         }
+        
+        /* --- ESTILOS DO NOVO CAMPO DE NOME --- */
+        .input-nome {
+            padding: 12px 20px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            border: 2px solid #ccc;
+            border-radius: 25px;
+            width: 80%;
+            max-width: 300px;
+            margin-bottom: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .input-nome:focus {
+            border-color: #89CFF0;
+        }
+        .msg-agradecimento {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 15px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: none; /* Fica escondido até a pessoa votar */
+        }
+
         .btn { 
             padding: 15px 30px; 
             font-size: 18px; 
@@ -68,26 +95,24 @@
             box-shadow: none;
         }
         
-        /* --- NOVO AZUL CLARINHO --- */
         .btn-boy { 
-            background-color: #89CFF0; /* Azul bebê */
-            color: #0a4b78; /* Texto mais escuro para contraste */
+            background-color: #89CFF0; 
+            color: #0a4b78; 
             box-shadow: 0 4px 15px rgba(137, 207, 240, 0.4);
         }
         .btn-boy:hover:not(:disabled) { 
-            background-color: #6CB4EE; /* Azul levemente mais forte no hover */
+            background-color: #6CB4EE; 
             transform: scale(1.05);
             box-shadow: 0 6px 20px rgba(137, 207, 240, 0.6);
         }
         
-        /* --- NOVO ROSA CLARINHO --- */
         .btn-girl { 
-            background-color: #FFB6C1; /* Rosa claro */
-            color: #d81b60; /* Texto mais escuro para contraste */
+            background-color: #FFB6C1; 
+            color: #d81b60; 
             box-shadow: 0 4px 15px rgba(255, 182, 193, 0.5);
         }
         .btn-girl:hover:not(:disabled) { 
-            background-color: #FF9EAE; /* Rosa levemente mais forte no hover */
+            background-color: #FF9EAE; 
             transform: scale(1.05);
             box-shadow: 0 6px 20px rgba(255, 182, 193, 0.7);
         }
@@ -111,8 +136,6 @@
             background: #eee; 
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
         }
-        
-        /* Barras com as novas cores claras */
         .bar-boy { 
             background-color: #89CFF0; 
             width: 50%; 
@@ -123,6 +146,40 @@
             width: 50%; 
             transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
         }
+
+        /* --- ESTILOS DA LISTA DE VOTOS --- */
+        .historico-votos {
+            margin-top: 40px;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: left;
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+        }
+        .historico-votos h3 {
+            margin-top: 0;
+            font-family: 'Fredoka', sans-serif;
+            text-align: center;
+            color: #555;
+        }
+        .historico-votos ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .historico-votos li {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 15px;
+            color: #333;
+        }
+        .historico-votos li:last-child {
+            border-bottom: none;
+        }
+        .cor-menino { color: #0a4b78; font-weight: bold; }
+        .cor-menina { color: #d81b60; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -133,8 +190,18 @@
     <div class="music-icons">🎸 🎹 🎻 🎤 🥁</div>
     <p class="subtitle"></p>
 
-    <button class="btn btn-boy" id="btn-boy">É Menino! 🥁💙</button>
-    <button class="btn btn-girl" id="btn-girl">É Menina! 🎻💖</button>
+    <!-- Área de votação que some após votar -->
+    <div id="area-votacao">
+        <input type="text" id="nome-votante" class="input-nome" placeholder="Digite seu nome para votar" required>
+        <br>
+        <button class="btn btn-boy" id="btn-boy">É Menino! 🥁💙</button>
+        <button class="btn btn-girl" id="btn-girl">É Menina! 🎻💖</button>
+    </div>
+
+    <!-- Mensagem que aparece após votar -->
+    <div id="msg-agradecimento" class="msg-agradecimento">
+        🎉 Seu voto foi registrado com sucesso! Obrigado!
+    </div>
 
     <div class="results">
         <div class="placar-title">Placar Atual</div>
@@ -145,11 +212,20 @@
             <div class="bar-girl" id="bar-girl"></div>
         </div>
     </div>
+
+    <!-- Lista de quem votou -->
+    <div class="historico-votos">
+        <h3>Lista de Apostas 📜</h3>
+        <ul id="lista-nomes">
+            <!-- Os nomes vão aparecer aqui -->
+        </ul>
+    </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, setDoc, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    // Adicionei o arrayUnion aqui na importação
+    import { getFirestore, doc, onSnapshot, setDoc, updateDoc, increment, getDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBRhIu1b6ltYiJD1EhWTS3F80g8E3Zchzc",
@@ -163,47 +239,69 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     
-    // Novo documento no banco para zerar novamente os testes do azul escuro
-    const docRef = doc(db, "votacao", "placar__oficial_v3");
+    // Novo documento para receber a estrutura de histórico
+    const docRef = doc(db, "votacao", "placar__oficial_v4");
 
     async function inicializarBanco() {
         const snap = await getDoc(docRef);
         if (!snap.exists()) {
-            await setDoc(docRef, { meninos: 0, meninas: 0 });
+            // Agora o banco nasce com um array vazio chamado 'historico'
+            await setDoc(docRef, { meninos: 0, meninas: 0, historico: [] });
         }
     }
     inicializarBanco();
 
+    // Verifica se o aparelho já votou
+    if (localStorage.getItem('ja_votou_cha_revelacao')) {
+        document.getElementById('area-votacao').style.display = 'none';
+        document.getElementById('msg-agradecimento').style.display = 'block';
+    }
+
     onSnapshot(docRef, (docSnap) => {
         if (docSnap.exists()) {
             const dados = docSnap.data();
-            atualizarDashboard(dados.meninos, dados.meninas);
+            // Passamos o histórico para a função que atualiza a tela
+            atualizarDashboard(dados.meninos, dados.meninas, dados.historico || []);
         }
     });
 
     async function votar(genero) {
+        const nomeInput = document.getElementById('nome-votante').value.trim();
+        
+        // Bloqueia se a pessoa tentar votar sem nome
+        if (nomeInput === "") {
+            alert("Por favor, digite seu nome antes de votar!");
+            document.getElementById('nome-votante').focus();
+            return;
+        }
+
         document.getElementById('btn-boy').disabled = true;
         document.getElementById('btn-girl').disabled = true;
 
-        // Confetes também ajustados para os tons mais claros
         if (genero === 'meninos') {
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#89CFF0', '#ADD8E6', '#ffffff'] });
         } else {
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#FFB6C1', '#FFC0CB', '#ffffff'] });
         }
 
+        // Salva o voto E o nome no banco de dados
         await updateDoc(docRef, {
-            [genero]: increment(1)
+            [genero]: increment(1),
+            historico: arrayUnion({ nome: nomeInput, voto: genero })
         });
 
-        document.getElementById('btn-boy').disabled = false;
-        document.getElementById('btn-girl').disabled = false;
+        // Salva no navegador que essa pessoa já votou
+        localStorage.setItem('ja_votou_cha_revelacao', 'sim');
+
+        // Esconde os botões e mostra a mensagem de sucesso
+        document.getElementById('area-votacao').style.display = 'none';
+        document.getElementById('msg-agradecimento').style.display = 'block';
     }
 
     document.getElementById('btn-boy').addEventListener('click', () => votar('meninos'));
     document.getElementById('btn-girl').addEventListener('click', () => votar('meninas'));
 
-    function atualizarDashboard(votosBoy, votosGirl) {
+    function atualizarDashboard(votosBoy, votosGirl, historico) {
         document.getElementById('count-boy').innerText = votosBoy;
         document.getElementById('count-girl').innerText = votosGirl;
 
@@ -213,6 +311,20 @@
 
         document.getElementById('bar-boy').style.width = pctBoy + '%';
         document.getElementById('bar-girl').style.width = pctGirl + '%';
+
+        // Atualiza a lista de nomes na tela
+        const listaUl = document.getElementById('lista-nomes');
+        listaUl.innerHTML = ''; // Limpa a lista antes de reescrever
+        
+        historico.forEach(item => {
+            const li = document.createElement('li');
+            if (item.voto === 'meninos') {
+                li.innerHTML = `🥁 <strong>${item.nome}</strong> acha que é <span class="cor-menino">Menino</span>!`;
+            } else {
+                li.innerHTML = `🎻 <strong>${item.nome}</strong> acha que é <span class="cor-menina">Menina</span>!`;
+            }
+            listaUl.appendChild(li);
+        });
     }
 </script>
 
