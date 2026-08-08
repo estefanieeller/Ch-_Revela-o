@@ -442,7 +442,7 @@
 
         // Limpa apenas o campo da mensagem (permite enviar mais recados com o mesmo nome)
         document.getElementById('texto-recado').value = '';
-        alert("Recadinho enviado com sucesso! 💖");
+        alert("Recadinho enviado com sucesso! ✅​");
     });
 
     function atualizarDashboard(votosBoy, votosGirl, historico, recados) {
@@ -474,7 +474,7 @@
         listaRecadosUl.innerHTML = '';
         recados.forEach(rec => {
             const li = document.createElement('li');
-            li.innerHTML = `<strong>💌 ${rec.nome}:</strong> "${rec.mensagem}"`;
+            li.innerHTML = `<strong> ${rec.nome}:</strong> "${rec.mensagem}"`;
             listaRecadosUl.appendChild(li);
         });
     }
