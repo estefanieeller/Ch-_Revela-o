@@ -329,7 +329,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     
-    const docRef = doc(db, "votacao", "placar_v4");
+    const docRef = doc(db, "votacao", "placar_v6");
 
     async function inicializarBanco() {
         const snap = await getDoc(docRef);
@@ -353,7 +353,7 @@
         }
 
         // Altera o botão do menu para "Ver Placar" caso já tenha votado
-        document.getElementById('btn-ir-votacao').innerText = "Ver Placar";
+        document.getElementById('btn-ir-votacao').innerText = "Ver Placar 📜";
     }
 
     // NAVEGAÇÃO
