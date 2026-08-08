@@ -63,7 +63,7 @@
             text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
         }
         
-        .input-nome {
+        .input-nome, .input-recado {
             padding: 12px 20px;
             font-size: 16px;
             font-family: 'Poppins', sans-serif;
@@ -76,7 +76,12 @@
             transition: border-color 0.3s;
             background: rgba(255, 255, 255, 0.9);
         }
-        .input-nome:focus {
+        .input-recado {
+            border-radius: 15px;
+            resize: none;
+            height: 80px;
+        }
+        .input-nome:focus, .input-recado:focus {
             border-color: #81C784; 
         }
 
@@ -88,7 +93,6 @@
             margin-bottom: 20px;
             display: none; 
         }
-        /* Cores dinâmicas para a caixa de agradecimento */
         .msg-verde {
             background-color: rgba(168, 230, 207, 0.9);
             color: #2D5A3F;
@@ -120,14 +124,30 @@
         .btn-entrar {
             background: linear-gradient(135deg, #A8E6CF 0%, #D4B2D8 100%);
             color: #333;
-            font-size: 22px;
-            padding: 15px 50px;
+            font-size: 20px;
+            padding: 15px 40px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            margin-top: 20px;
+            margin-top: 10px;
+            display: block;
+            width: 80%;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
         }
         .btn-entrar:hover {
             transform: scale(1.05);
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-voltar {
+            background-color: #6c757d;
+            font-size: 15px;
+            padding: 10px 20px;
+            margin-top: 25px;
+            border-radius: 20px;
+        }
+        .btn-voltar:hover {
+            background-color: #5a6268;
         }
 
         .btn-boy { 
@@ -184,9 +204,9 @@
             transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
         }
 
-        .historico-votos {
+        .historico-votos, .historico-recados {
             margin-top: 40px;
-            background: rgba(255, 255, 255, 0.65); 
+            background: rgba(255, 255, 255, 0.75); 
             padding: 20px;
             border-radius: 15px;
             text-align: left;
@@ -194,24 +214,29 @@
             overflow-y: auto;
             border: 1px solid rgba(255, 255, 255, 0.5);
         }
-        .historico-votos h3 {
+        .historico-votos h3, .historico-recados h3 {
             margin-top: 0;
             font-family: 'Fredoka', sans-serif;
             text-align: center;
             color: #333;
         }
-        .historico-votos ul {
+        .historico-votos ul, .historico-recados ul {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-        .historico-votos li {
-            padding: 8px 10px;
+        .historico-votos li, .historico-recados li {
+            padding: 10px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             font-size: 15px;
             color: #333;
         }
-        .historico-votos li:last-child {
+        .historico-recados li strong {
+            color: #5A2D5C;
+            display: block;
+            margin-bottom: 3px;
+        }
+        .historico-votos li:last-child, .historico-recados li:last-child {
             border-bottom: none;
         }
         .cor-menino { color: #2D5A3F; font-weight: bold; }
@@ -220,14 +245,17 @@
 </head>
 <body>
 
+<!-- TELA 1: MENU INICIAL -->
 <div class="container" id="tela-inicial">
     <h2>Chá Revelação</h2>
     <h1>Priscila & Diego</h1>
     <p class="subtitle">Participe da nossa revelação!</p>
     
-    <button class="btn btn-entrar" id="btn-entrar">Votar</button>
+    <button class="btn btn-entrar" id="btn-ir-votacao">Votar</button>
+    <button class="btn btn-entrar" id="btn-ir-recados">Deixar Recadinho 💌</button>
 </div>
 
+<!-- TELA 2: DASHBOARD DE VOTAÇÃO -->
 <div class="container" id="tela-votacao" style="display: none;">
     <h2>Quem será o novo integrante do grupo de louvor?</h2>
     <div class="music-icons"> 🎹 🎻 🎤 🥁</div>
@@ -240,9 +268,8 @@
         <button class="btn btn-girl" id="btn-girl">É Menina! 🎻💜</button>
     </div>
 
-    <!-- Mensagem de agradecimento -->
     <div id="msg-agradecimento" class="msg-agradecimento">
-        🎉 Seu palpite foi registrado com sucesso!
+        🎉 Seu palpite foi registrado com sucesso! Obrigado!
     </div>
 
     <div class="results">
@@ -257,10 +284,33 @@
 
     <div class="historico-votos">
         <h3>Lista de Palpites 📜</h3>
-        <ul id="lista-nomes">
-            <!-- Os nomes vão aparecer aqui -->
+        <ul id="lista-nomes"></ul>
+    </div>
+
+    <button class="btn btn-voltar" onclick="voltarAoMenu()">⬅ Voltar ao Menu</button>
+</div>
+
+<!-- TELA 3: MURAL DE RECADINHOS -->
+<div class="container" id="tela-recados" style="display: none;">
+    <h2>Recadinhos com Carinho</h2>
+    <p class="subtitle">Deixe uma mensagem para o bebê, mamãe ou papai!</p>
+
+    <div id="area-recado">
+        <input type="text" id="nome-recardo" class="input-nome" placeholder="Seu Nome" required>
+        <br>
+        <textarea id="texto-recado" class="input-recado" placeholder="Escreva seu recadinho aqui..." required></textarea>
+        <br>
+        <button class="btn btn-entrar" id="btn-enviar-recado" style="margin-top:0;">Enviar Recadinho ✨</button>
+    </div>
+
+    <div class="historico-recados">
+        <h3>Mural de Mensagens 💌</h3>
+        <ul id="lista-recados">
+            <!-- Os recados vão aparecer aqui -->
         </ul>
     </div>
+
+    <button class="btn btn-voltar" onclick="voltarAoMenu()">⬅ Voltar ao Menu</button>
 </div>
 
 <script type="module">
@@ -284,50 +334,52 @@
     async function inicializarBanco() {
         const snap = await getDoc(docRef);
         if (!snap.exists()) {
-            await setDoc(docRef, { meninos: 0, meninas: 0, historico: [] });
+            await setDoc(docRef, { meninos: 0, meninas: 0, historico: [], recados: [] });
         }
     }
     inicializarBanco();
 
-    // TRAVA DE SEGURANÇA NA INICIALIZAÇÃO
+    // TRAVA DE SEGURANÇA NA INICIALIZAÇÃO DE VOTAÇÃO
     if (localStorage.getItem('ja_votou_cha_revelacao')) {
         document.getElementById('area-votacao').style.display = 'none';
-        
         const msgDiv = document.getElementById('msg-agradecimento');
         msgDiv.style.display = 'block';
         
-        // Pega qual foi a escolha salva para pintar a mensagem da cor certa se já votou antes
         const votoAnterior = localStorage.getItem('voto_escolhido');
         if (votoAnterior === 'meninos') {
             msgDiv.classList.add('msg-verde');
         } else {
             msgDiv.classList.add('msg-lilas');
         }
-
-        document.getElementById('btn-entrar').innerText = "Ver Placar";
     }
 
-    // LÓGICA DE NAVEGAÇÃO ENTRE AS TELAS COM CONFETES VERDES E LILÁS
-    document.getElementById('btn-entrar').addEventListener('click', () => {
-        // Dispara confetes verdes e lilases ao clicar em "Votar" ou "Ver Placar"
-        confetti({ 
-            particleCount: 120, 
-            spread: 70, 
-            origin: { y: 0.6 }, 
-            colors: ['#A8E6CF', '#D4B2D8', '#ffffff'] 
-        });
-
+    // NAVEGAÇÃO
+    document.getElementById('btn-ir-votacao').addEventListener('click', () => {
+        confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 }, colors: ['#A8E6CF', '#D4B2D8', '#ffffff'] });
         document.getElementById('tela-inicial').style.display = 'none';
         document.getElementById('tela-votacao').style.display = 'block';
     });
 
+    document.getElementById('btn-ir-recados').addEventListener('click', () => {
+        confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 }, colors: ['#A8E6CF', '#D4B2D8', '#ffffff'] });
+        document.getElementById('tela-inicial').style.display = 'none';
+        document.getElementById('tela-recados').style.display = 'block';
+    });
+
+    window.voltarAoMenu = function() {
+        document.getElementById('tela-votacao').style.display = 'none';
+        document.getElementById('tela-recados').style.display = 'none';
+        document.getElementById('tela-inicial').style.display = 'block';
+    }
+
     onSnapshot(docRef, (docSnap) => {
         if (docSnap.exists()) {
             const dados = docSnap.data();
-            atualizarDashboard(dados.meninos, dados.meninas, dados.historico || []);
+            atualizarDashboard(dados.meninos, dados.meninas, dados.historico || [], dados.recados || []);
         }
     });
 
+    // FUNÇÃO DE VOTAÇÃO
     async function votar(genero) {
         const nomeInput = document.getElementById('nome-votante').value.trim();
         
@@ -356,7 +408,7 @@
         });
 
         localStorage.setItem('ja_votou_cha_revelacao', 'sim');
-        localStorage.setItem('voto_escolhido', genero); // Salva a escolha para pintar a mensagem
+        localStorage.setItem('voto_escolhido', genero);
 
         document.getElementById('area-votacao').style.display = 'none';
         msgDiv.style.display = 'block';
@@ -365,7 +417,29 @@
     document.getElementById('btn-boy').addEventListener('click', () => votar('meninos'));
     document.getElementById('btn-girl').addEventListener('click', () => votar('meninas'));
 
-    function atualizarDashboard(votosBoy, votosGirl, historico) {
+    // FUNÇÃO DE ENVIAR RECADINHO (Permite vários recados)
+    document.getElementById('btn-enviar-recado').addEventListener('click', async () => {
+        const nomeRecardo = document.getElementById('nome-recardo').value.trim();
+        const textoRecado = document.getElementById('texto-recado').value.trim();
+
+        if (nomeRecardo === "" || textoRecado === "") {
+            alert("Por favor, preencha seu nome e escreva seu recadinho!");
+            return;
+        }
+
+        // Chuva de confetes verdes e lilases
+        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#A8E6CF', '#D4B2D8', '#ffffff'] });
+
+        await updateDoc(docRef, {
+            recados: arrayUnion({ nome: nomeRecardo, mensagem: textoRecado })
+        });
+
+        // Limpa apenas o campo da mensagem (permite enviar mais recados com o mesmo nome)
+        document.getElementById('texto-recado').value = '';
+        alert("Recadinho enviado com sucesso! 💖");
+    });
+
+    function atualizarDashboard(votosBoy, votosGirl, historico, recados) {
         document.getElementById('count-boy').innerText = votosBoy;
         document.getElementById('count-girl').innerText = votosGirl;
 
@@ -376,9 +450,9 @@
         document.getElementById('bar-boy').style.width = pctBoy + '%';
         document.getElementById('bar-girl').style.width = pctGirl + '%';
 
+        // Atualiza Lista de Votos
         const listaUl = document.getElementById('lista-nomes');
         listaUl.innerHTML = ''; 
-        
         historico.forEach(item => {
             const li = document.createElement('li');
             if (item.voto === 'meninos') {
@@ -387,6 +461,15 @@
                 li.innerHTML = `💜 <strong>${item.nome}</strong> acha que é <span class="cor-menina">Menina</span>!`;
             }
             listaUl.appendChild(li);
+        });
+
+        // Atualiza Mural de Recados
+        const listaRecadosUl = document.getElementById('lista-recados');
+        listaRecadosUl.innerHTML = '';
+        recados.forEach(rec => {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>💌 ${rec.nome}:</strong> "${rec.mensagem}"`;
+            listaRecadosUl.appendChild(li);
         });
     }
 </script>
