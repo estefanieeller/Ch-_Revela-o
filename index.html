@@ -351,6 +351,9 @@
         } else {
             msgDiv.classList.add('msg-lilas');
         }
+
+        // Altera o botão do menu para "Ver Placar" caso já tenha votado
+        document.getElementById('btn-ir-votacao').innerText = "Ver Placar";
     }
 
     // NAVEGAÇÃO
@@ -412,6 +415,9 @@
 
         document.getElementById('area-votacao').style.display = 'none';
         msgDiv.style.display = 'block';
+
+        // Atualiza o botão do menu para "Ver Placar" logo após votar
+        document.getElementById('btn-ir-votacao').innerText = "Ver Placar";
     }
 
     document.getElementById('btn-boy').addEventListener('click', () => votar('meninos'));
