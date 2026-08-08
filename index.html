@@ -77,16 +77,25 @@
             background: rgba(255, 255, 255, 0.9);
         }
         .input-nome:focus {
-            border-color: #81C784; /* Verde claro no foco */
+            border-color: #81C784; 
         }
+
+        /* Mensagem de agradecimento dinâmica */
         .msg-agradecimento {
-            background-color: rgba(212, 237, 218, 0.9);
-            color: #155724;
             padding: 15px;
             border-radius: 15px;
             font-weight: 600;
             margin-bottom: 20px;
             display: none; 
+        }
+        /* Cores dinâmicas para a caixa de agradecimento */
+        .msg-verde {
+            background-color: rgba(168, 230, 207, 0.9);
+            color: #2D5A3F;
+        }
+        .msg-lilas {
+            background-color: rgba(212, 178, 216, 0.9);
+            color: #5A2D5C;
         }
 
         .btn { 
@@ -108,7 +117,6 @@
             box-shadow: none;
         }
         
-        /* Botão da página inicial com degradê Verde Claro e Lilás */
         .btn-entrar {
             background: linear-gradient(135deg, #A8E6CF 0%, #D4B2D8 100%);
             color: #333;
@@ -122,10 +130,9 @@
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
 
-        /* --- BOTÃO MENINO: VERDE CLARO --- */
         .btn-boy { 
-            background-color: #A8E6CF; /* Verde claro pastel */
-            color: #2D5A3F; /* Texto verde escuro para contraste */
+            background-color: #A8E6CF; 
+            color: #2D5A3F; 
             box-shadow: 0 4px 15px rgba(168, 230, 207, 0.5);
         }
         .btn-boy:hover:not(:disabled) { 
@@ -134,10 +141,9 @@
             box-shadow: 0 6px 20px rgba(168, 230, 207, 0.7);
         }
         
-        /* --- BOTÃO MENINA: LILÁS --- */
         .btn-girl { 
-            background-color: #D4B2D8; /* Lilás pastel */
-            color: #5A2D5C; /* Texto roxo/lilás escuro para contraste */
+            background-color: #D4B2D8; 
+            color: #5A2D5C; 
             box-shadow: 0 4px 15px rgba(212, 178, 216, 0.5);
         }
         .btn-girl:hover:not(:disabled) { 
@@ -167,8 +173,6 @@
             background: rgba(255, 255, 255, 0.7); 
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
         }
-        
-        /* Barra de progresso com as novas cores */
         .bar-boy { 
             background-color: #A8E6CF; 
             width: 50%; 
@@ -210,8 +214,6 @@
         .historico-votos li:last-child {
             border-bottom: none;
         }
-        
-        /* Cores aplicadas nos textos da lista de palpites */
         .cor-menino { color: #2D5A3F; font-weight: bold; }
         .cor-menina { color: #5A2D5C; font-weight: bold; }
     </style>
@@ -234,13 +236,13 @@
     <div id="area-votacao">
         <input type="text" id="nome-votante" class="input-nome" placeholder="Digite seu nome para votar" required>
         <br>
-        <button class="btn btn-boy" id="btn-boy">É Menino! 🥁💚​</button>
+        <button class="btn btn-boy" id="btn-boy">É Menino! 🥁💚</button>
         <button class="btn btn-girl" id="btn-girl">É Menina! 🎻💜</button>
     </div>
 
-    <!-- Mensagem que aparece depois de votar -->
+    <!-- Mensagem de agradecimento -->
     <div id="msg-agradecimento" class="msg-agradecimento">
-        🎉 Seu palpite foi registrado com sucesso! Obrigado!
+        🎉 Seu palpite foi registrado com sucesso!
     </div>
 
     <div class="results">
@@ -290,12 +292,31 @@
     // TRAVA DE SEGURANÇA NA INICIALIZAÇÃO
     if (localStorage.getItem('ja_votou_cha_revelacao')) {
         document.getElementById('area-votacao').style.display = 'none';
-        document.getElementById('msg-agradecimento').style.display = 'block';
+        
+        const msgDiv = document.getElementById('msg-agradecimento');
+        msgDiv.style.display = 'block';
+        
+        // Pega qual foi a escolha salva para pintar a mensagem da cor certa se já votou antes
+        const votoAnterior = localStorage.getItem('voto_escolhido');
+        if (votoAnterior === 'meninos') {
+            msgDiv.classList.add('msg-verde');
+        } else {
+            msgDiv.classList.add('msg-lilas');
+        }
+
         document.getElementById('btn-entrar').innerText = "Ver Placar";
     }
 
-    // LÓGICA DE NAVEGAÇÃO ENTRE AS TELAS
+    // LÓGICA DE NAVEGAÇÃO ENTRE AS TELAS COM CONFETES VERDES E LILÁS
     document.getElementById('btn-entrar').addEventListener('click', () => {
+        // Dispara confetes verdes e lilases ao clicar em "Votar" ou "Ver Placar"
+        confetti({ 
+            particleCount: 120, 
+            spread: 70, 
+            origin: { y: 0.6 }, 
+            colors: ['#A8E6CF', '#D4B2D8', '#ffffff'] 
+        });
+
         document.getElementById('tela-inicial').style.display = 'none';
         document.getElementById('tela-votacao').style.display = 'block';
     });
@@ -319,11 +340,14 @@
         document.getElementById('btn-boy').disabled = true;
         document.getElementById('btn-girl').disabled = true;
 
-        // Confetes atualizados para tons de verde claro e lilás
+        const msgDiv = document.getElementById('msg-agradecimento');
+
         if (genero === 'meninos') {
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#A8E6CF', '#88DBB3', '#ffffff'] });
+            msgDiv.classList.add('msg-verde');
         } else {
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#D4B2D8', '#C39CC7', '#ffffff'] });
+            msgDiv.classList.add('msg-lilas');
         }
 
         await updateDoc(docRef, {
@@ -332,8 +356,10 @@
         });
 
         localStorage.setItem('ja_votou_cha_revelacao', 'sim');
+        localStorage.setItem('voto_escolhido', genero); // Salva a escolha para pintar a mensagem
+
         document.getElementById('area-votacao').style.display = 'none';
-        document.getElementById('msg-agradecimento').style.display = 'block';
+        msgDiv.style.display = 'block';
     }
 
     document.getElementById('btn-boy').addEventListener('click', () => votar('meninos'));
@@ -356,7 +382,7 @@
         historico.forEach(item => {
             const li = document.createElement('li');
             if (item.voto === 'meninos') {
-                li.innerHTML = `💚​ <strong>${item.nome}</strong> acha que é <span class="cor-menino">Menino</span>!`;
+                li.innerHTML = `💚 <strong>${item.nome}</strong> acha que é <span class="cor-menino">Menino</span>!`;
             } else {
                 li.innerHTML = `💜 <strong>${item.nome}</strong> acha que é <span class="cor-menina">Menina</span>!`;
             }
