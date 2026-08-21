@@ -264,8 +264,8 @@
     <div id="area-votacao">
         <input type="text" id="nome-votante" class="input-nome" placeholder="Digite seu nome para votar" required>
         <br>
-        <button class="btn btn-boy" id="btn-boy">É Menino! 🥁💚</button>
-        <button class="btn btn-girl" id="btn-girl">É Menina! 🎻💜</button>
+        <button class="btn btn-boy" id="btn-boy">É Francisco! 🥁💚</button>
+        <button class="btn btn-girl" id="btn-girl">É Celina! 🎻💜</button>
     </div>
 
     <div id="msg-agradecimento" class="msg-agradecimento">
@@ -462,9 +462,9 @@
         historico.forEach(item => {
             const li = document.createElement('li');
             if (item.voto === 'meninos') {
-                li.innerHTML = `💚 <strong>${item.nome}</strong> acha que é <span class="cor-menino">Menino</span>!`;
+                li.innerHTML = `💚 <strong>${item.nome}</strong> acha que é <span class="cor-menino">Francisco</span>!`;
             } else {
-                li.innerHTML = `💜 <strong>${item.nome}</strong> acha que é <span class="cor-menina">Menina</span>!`;
+                li.innerHTML = `💜 <strong>${item.nome}</strong> acha que é <span class="cor-menina">Celina</span>!`;
             }
             listaUl.appendChild(li);
         });
